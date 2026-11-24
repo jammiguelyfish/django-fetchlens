@@ -2,7 +2,7 @@
   "name": "django-fetchlens",
   "displayName": "Django FetchLens",
   "description": "Browse your Django routes, jump from a frontend fetch() call to the view that serves it, and get warned about URLs and methods that do not exist.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "jammiguelyfish",
   "license": "MIT",
   "engines": {

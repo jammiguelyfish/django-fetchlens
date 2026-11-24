@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- New extension icon: a lens following a call to its view.
+
 ## 0.1.0
 
 - Routes sidebar and "Go to route..." search, read from Django's resolved URL configuration.
