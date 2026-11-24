@@ -149,5 +149,6 @@
   "bugs": {
     "url": "https://github.com/jammiguelyfish/django-fetchlens/issues"
   },
-  "homepage": "https://github.com/jammiguelyfish/django-fetchlens#readme"
+  "homepage": "https://github.com/jammiguelyfish/django-fetchlens#readme",
+  "icon": "media/icon.png"
 }
