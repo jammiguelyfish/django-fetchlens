@@ -126,5 +126,9 @@
     "mocha": "^12.0.3",
     "typescript": "^5.9.3",
     "vitest": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jammiguelyfish/django-fetchlens.git"
   }
 }
