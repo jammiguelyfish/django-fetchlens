@@ -24,7 +24,7 @@ It recognises:
 | Shape | Example |
 |---|---|
 | `fetch` | `fetch("/api/documents/", { method: "POST" })` |
-| axios and similar | `axios.post("/api/x/")`, `api.delete(\`/api/x/${id}/\`)`, `axios({ url, method })` |
+| axios and similar | `axios.post("/api/x/")`, ``api.delete(`/api/x/${id}/`)``, `axios({ url, method })` |
 | method-first wrappers | `request("POST", "/api/auth/login/")` (any function name, no setup) |
 
 URLs it cannot read statically (a variable, `${base}/x`) are skipped rather than guessed. Calls to URLs the project does not serve, such as other websites or `/static/`, are never judged.
