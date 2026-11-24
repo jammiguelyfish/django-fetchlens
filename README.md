@@ -2,9 +2,9 @@
 
 A VS Code extension that reads the URLs your Django project really serves, lists them in a sidebar, and jumps from a route to the view that handles it.
 
-> **Status: work in progress (milestone 3 of 4).** Route browsing, frontend-to-view linking and warnings work. Packaging, CI and publishing to the Marketplace are next.
+> **Status: 0.1.0, not yet on the Marketplace.** Everything below works and is tested; see [Install](#install).
 
-## What works today
+## Features
 
 - **Routes sidebar** (activity bar, "Django Routes"): every route, grouped by first path segment, with its HTTP methods and view. Django admin and other third-party routes are collapsed into their own group.
 - **Open the view**: click a route to land on the function, class-based view method, or DRF `ViewSet` action that serves it.
@@ -46,6 +46,39 @@ Only URLs under a prefix your project owns (for example `/api/`) are checked, so
 FetchLens runs a small helper (`python/fetchlens_routes.py`) with your project's own Python interpreter. The helper calls `django.setup()` and walks the URL resolver that Django itself builds, so `include()`, namespaces and DRF routers behave exactly as they do at runtime. There is no regex guessing of `urls.py`.
 
 Because that executes your project's code, the extension is disabled in untrusted workspaces.
+
+## Install
+
+Not published to the Marketplace yet. Until then, build and install the package yourself:
+
+```bash
+git clone https://github.com/jammiguelyfish/django-fetchlens
+cd django-fetchlens
+npm install
+npm run package                     # creates django-fetchlens-0.1.0.vsix
+code --install-extension django-fetchlens-0.1.0.vsix
+```
+
+Open a folder that contains a Django project (a `manage.py`) and trust the workspace. The Django Routes icon appears in the activity bar. The project's dependencies must be installed in the interpreter selected in the Python extension (or set `fetchlens.pythonPath`).
+
+If your settings refuse to load without environment variables, set them in `fetchlens.env`:
+
+```json
+{ "fetchlens.env": { "DATABASE_URL": "sqlite:///x.db", "SECRET_KEY": "dev" } }
+```
+
+## Limits
+
+- Frontend calls are found statically. A URL built from a variable (`fetch(url)`, `${base}/x`) is skipped, not guessed.
+- A call whose method is chosen at runtime (`{ method }`) is matched by URL only.
+- Generated API clients (for example from OpenAPI) are only understood if the generated code calls `fetch`/`axios`/`client.get` with literal paths.
+- One Django project per workspace folder; use `fetchlens.projectRoot` to pick it in a monorepo.
+- It reads the URL configuration by importing your project, so a broken import or missing environment variable shows as an error in the sidebar rather than as routes.
+
+## Compared with
+
+- **PyCharm Professional's Endpoints window** lists and navigates endpoints for Django, but is part of a paid edition and does not check frontend calls.
+- **Other VS Code route explorers** (PyPoints, ApiLane, TraceLens) list routes found by scanning source. FetchLens asks Django for the resolved URL configuration instead, and its focus is the other direction: checking the calls your frontend makes against those routes.
 
 ## Settings
 

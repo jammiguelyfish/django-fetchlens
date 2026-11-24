@@ -1,0 +1,12 @@
+.github/**
+.vscode/**
+.vscode-test/**
+node_modules/**
+src/**
+test/**
+out/**/*.map
+tsconfig.json
+package-lock.json
+**/__pycache__/**
+**/*.pyc
+esbuild.mjs

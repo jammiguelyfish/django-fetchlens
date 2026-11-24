@@ -80,7 +80,21 @@ def decorator_methods(fn):
     return None
 
 
-def describe_view(callback):
+def is_external(path, root):
+    """True for code that is not the user's own: libraries, virtualenvs, anything outside the project."""
+    if not path:
+        return False
+    path = os.path.abspath(path)
+    return (
+        not os.path.normcase(path).startswith(os.path.normcase(root))
+        or "site-packages" in path
+        or "dist-packages" in path
+        or os.sep + "venv" + os.sep in path
+        or os.sep + ".venv" + os.sep in path
+    )
+
+
+def describe_view(callback, root):
     """Return (view name, {METHOD: (file, line)} or None for 'any', primary location)."""
     cls = getattr(callback, "cls", None) or getattr(callback, "view_class", None)
     actions = getattr(callback, "actions", None)  # DRF ViewSet.as_view({'get': 'list'})
@@ -108,14 +122,19 @@ def describe_view(callback):
         for method, (action, fn) in handlers.items():
             real = closure_function(fn) or fn
             f, ln = location(real, None)
-            if f is None:
-                f, ln = location(cls, None)
+            cf, cl = location(cls, None)
+            # Handlers inherited from a library (ListModelMixin.list, TemplateView.get) live in
+            # site-packages; the view class in the user's code is the useful place to land.
+            if (f is None or is_external(f, root)) and cf and not is_external(cf, root):
+                f, ln = cf, cl
+            elif f is None:
+                f, ln = cf, cl
             out[method] = {"name": f"{name}.{action}" if not closure_function(fn) else name, "file": f, "line": ln}
         cf, cl = location(cls, None)
-        # api_view wrappers live in DRF; prefer a handler's location for the primary one
-        if out:
-            first = next(iter(out.values()))
-            cf, cl = first["file"] or cf, first["line"] or cl
+        # Primary location: the first handler that is the user's own code, else the class itself.
+        own = next((h for h in out.values() if h["file"] and not is_external(h["file"], root)), None)
+        if own:
+            cf, cl = own["file"], own["line"]
         return name, out or None, (cf, cl)
 
     f, ln = location(callback, None)
@@ -200,13 +219,8 @@ def main():
                 continue  # DRF's '.json' / '.api' duplicates are noise in an editor
             if any(c in r["pattern"] for c in "^$(") or r["is_regex"]:
                 r["pattern"] = display_from_regex(r["regex"])
-            name, handlers, (file, line) = describe_view(r["callback"])
-            external = bool(file) and (
-                not os.path.abspath(file).startswith(root)
-                or "site-packages" in file
-                or "dist-packages" in file
-                or os.sep + "venv" + os.sep in file
-            )
+            name, handlers, (file, line) = describe_view(r["callback"], root)
+            external = bool(file) and is_external(file, root)
             routes.append(
                 {
                     "external": external,

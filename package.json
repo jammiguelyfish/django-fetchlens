@@ -2,7 +2,7 @@
   "name": "django-fetchlens",
   "displayName": "Django FetchLens",
   "description": "Browse your Django routes, jump from a frontend fetch() call to the view that serves it, and get warned about URLs and methods that do not exist.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "jammiguelyfish",
   "license": "MIT",
   "engines": {
@@ -123,17 +123,21 @@
     }
   },
   "scripts": {
-    "compile": "tsc -p .",
+    "compile": "tsc -p . --noEmit && node esbuild.mjs",
     "watch": "tsc -watch -p .",
     "test": "vitest run",
     "test:py": "python test/test_helper.py",
-    "test:e2e": "npm run compile && node test/e2e/runTest.js"
+    "test:e2e": "npm run compile && node test/e2e/runTest.js",
+    "package": "tsc -p . --noEmit && node esbuild.mjs --production && vsce package --no-dependencies",
+    "vscode:prepublish": "node esbuild.mjs --production"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.14.0",
     "@types/vscode": "^1.90.0",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.1",
+    "esbuild": "^0.28.2",
     "mocha": "^12.0.3",
     "typescript": "^5.9.3",
     "vitest": "^2.0.0"
@@ -141,5 +145,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/jammiguelyfish/django-fetchlens.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/jammiguelyfish/django-fetchlens/issues"
+  },
+  "homepage": "https://github.com/jammiguelyfish/django-fetchlens#readme"
 }

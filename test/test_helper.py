@@ -66,6 +66,18 @@ class HelperTest(unittest.TestCase):
     def test_drf_format_suffix_duplicates_are_dropped(self):
         self.assertFalse([p for p in self.by_pattern if "format" in p or "^" in p or "$" in p], sorted(self.by_pattern))
 
+    def test_handlers_inherited_from_a_library_land_on_the_users_class(self):
+        for pattern in ("api/v1/orders/", "api/v1/orders/<pk>/", ""):
+            r = self.route(pattern)
+            self.assertFalse(r["external"], pattern)
+            self.assertTrue(r["file"].endswith(os.path.join("shop", "views.py")), r["file"])
+        self.assertEqual(self.route("api/v1/orders/")["methods"], ["GET"])
+        self.assertEqual(self.route("api/v1/orders/<pk>/")["methods"], ["GET"])
+        self.assertEqual(self.route("")["methods"], ["GET"])
+        with open(self.route("")["file"], encoding="utf-8") as fh:
+            text = fh.read().splitlines()
+        self.assertIn("class HomeView", text[self.route("")["line"] - 1])
+
     def test_project_routes_are_not_external(self):
         self.assertFalse(self.route("api/v1/cart/")["external"])
 

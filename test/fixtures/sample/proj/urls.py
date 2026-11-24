@@ -5,6 +5,7 @@ from shop import views
 
 router = DefaultRouter()
 router.register("products", views.ProductViewSet, basename="product")
+router.register("orders", views.OrderViewSet, basename="order")
 
 shop_patterns = [
     path("cart/", views.CartView.as_view(), name="cart"),
@@ -14,6 +15,7 @@ shop_patterns = [
 ]
 
 urlpatterns = [
+    path("", views.HomeView.as_view(), name="home"),
     path("api/v1/", include((shop_patterns, "shop"), namespace="shop")),
     path("api/v1/", include(router.urls)),
 ]
