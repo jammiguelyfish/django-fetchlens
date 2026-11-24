@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { findProjectRoot, runHelper } from "./runner";
 import { openRoute, RoutesProvider } from "./routesProvider";
 import { CallDefinitionProvider, CallLensProvider, FrontendAnalyser, FRONTEND_LANGS } from "./frontend";
+import { registerDiagnostics } from "./diagnostics";
 import { Route } from "./types";
 
 const output = vscode.window.createOutputChannel("Django FetchLens");
@@ -31,6 +32,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerDefinitionProvider(selector, new CallDefinitionProvider(analyser))
   );
   context.subscriptions.push(vscode.window.registerTreeDataProvider("fetchlens.routes", provider), output);
+
+  registerDiagnostics(context, analyser);
 
   let running = false;
   // A refresh asked for while one is running (e.g. a save during the first load) is not dropped:

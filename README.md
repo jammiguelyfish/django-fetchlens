@@ -2,7 +2,7 @@
 
 A VS Code extension that reads the URLs your Django project really serves, lists them in a sidebar, and jumps from a route to the view that handles it.
 
-> **Status: work in progress (milestone 2 of 4).** Route browsing and frontend-to-view linking work. Warnings for missing routes, wrong methods and missing trailing slashes are next, then packaging and publishing.
+> **Status: work in progress (milestone 3 of 4).** Route browsing, frontend-to-view linking and warnings work. Packaging, CI and publishing to the Marketplace are next.
 
 ## What works today
 
@@ -29,6 +29,18 @@ It recognises:
 
 URLs it cannot read statically (a variable, `${base}/x`) are skipped rather than guessed. Calls to URLs the project does not serve, such as other websites or `/static/`, are never judged.
 
+## Warnings
+
+Frontend calls that cannot work are underlined, so you find out in the editor instead of from a 404:
+
+| Problem | Example message |
+|---|---|
+| Route does not exist | `No Django route matches GET /api/nope/.` |
+| Method not allowed | `/api/v1/checkout/ does not accept GET. checkout allows POST.` |
+| Missing trailing slash | `Missing trailing slash: Django serves /api/v1/cart/. GET is redirected, but POST, PUT, PATCH and DELETE fail.` (with a quick fix) |
+
+Only URLs under a prefix your project owns (for example `/api/`) are checked, so calls to other sites and `/static/` never warn. Silence an intentional exception with `// fetchlens-ignore` on the same line or the line above, or change the level with `fetchlens.diagnostics` (`off`, `information`, `warning`, `error`).
+
 ## How it works
 
 FetchLens runs a small helper (`python/fetchlens_routes.py`) with your project's own Python interpreter. The helper calls `django.setup()` and walks the URL resolver that Django itself builds, so `include()`, namespaces and DRF routers behave exactly as they do at runtime. There is no regex guessing of `urls.py`.
@@ -42,6 +54,8 @@ Because that executes your project's code, the extension is disabled in untruste
 | `fetchlens.pythonPath` | Interpreter with your dependencies. Empty uses the one selected in the Python extension. |
 | `fetchlens.projectRoot` | Folder containing `manage.py`. Empty auto-detects. |
 | `fetchlens.settingsModule` | `DJANGO_SETTINGS_MODULE`. Empty reads it from `manage.py`. |
+| `fetchlens.diagnostics` | Severity of the warnings above, or `off`. |
+| `fetchlens.clientReceivers` | Extra object names whose `.get/.post/...` calls count as HTTP calls (default: `axios`, `api`, `http`, `client`, `apiClient`, `$http`, `ky`, `got`, `instance`). |
 | `fetchlens.env` | Environment variables to set while loading Django, e.g. `{"DJANGO_DEBUG": "1"}` for settings that refuse to load without them. |
 
 ## Development

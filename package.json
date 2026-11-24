@@ -107,6 +107,17 @@
           },
           "default": [],
           "description": "Objects whose .get/.post/.put/.patch/.delete calls are treated as HTTP calls (default: axios, api, http, client, apiClient, $http, ky, got, instance). Calls like request(\"POST\", \"/api/x/\") and fetch() are found automatically."
+        },
+        "fetchlens.diagnostics": {
+          "type": "string",
+          "enum": [
+            "off",
+            "information",
+            "warning",
+            "error"
+          ],
+          "default": "warning",
+          "description": "How to show frontend calls to URLs or methods that Django does not serve. Add // fetchlens-ignore on or above a line to silence one call."
         }
       }
     }
