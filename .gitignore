@@ -3,3 +3,4 @@ out/
 *.vsix
 __pycache__/
 .vscode-test/
+test/fixtures/sample/.vscode/

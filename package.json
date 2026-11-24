@@ -99,6 +99,14 @@
             "type": "string"
           },
           "description": "Environment variables to set while loading Django, e.g. {\"DJANGO_DEBUG\": \"1\"}. Needed when your settings refuse to load without them."
+        },
+        "fetchlens.clientReceivers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Objects whose .get/.post/.put/.patch/.delete calls are treated as HTTP calls (default: axios, api, http, client, apiClient, $http, ky, got, instance). Calls like request(\"POST\", \"/api/x/\") and fetch() are found automatically."
         }
       }
     }
@@ -116,7 +124,7 @@
     "@types/vscode": "^1.90.0",
     "@vscode/test-electron": "^3.1.0",
     "mocha": "^12.0.3",
-    "typescript": "^5.5.0",
+    "typescript": "^5.9.3",
     "vitest": "^2.0.0"
   }
 }

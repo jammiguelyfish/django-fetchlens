@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { findProjectRoot, runHelper } from "./runner";
 import { openRoute, RoutesProvider } from "./routesProvider";
+import { CallDefinitionProvider, CallLensProvider, FrontendAnalyser, FRONTEND_LANGS } from "./frontend";
 import { Route } from "./types";
 
 const output = vscode.window.createOutputChannel("Django FetchLens");
@@ -23,12 +24,38 @@ async function pythonFor(folder: vscode.WorkspaceFolder): Promise<string> {
 
 export function activate(context: vscode.ExtensionContext) {
   const provider = new RoutesProvider();
+  const analyser = new FrontendAnalyser();
+  const selector = FRONTEND_LANGS.map((language) => ({ language }));
+  context.subscriptions.push(
+    vscode.languages.registerCodeLensProvider(selector, new CallLensProvider(analyser)),
+    vscode.languages.registerDefinitionProvider(selector, new CallDefinitionProvider(analyser))
+  );
   context.subscriptions.push(vscode.window.registerTreeDataProvider("fetchlens.routes", provider), output);
 
   let running = false;
-  async function refresh() {
+  // A refresh asked for while one is running (e.g. a save during the first load) is not dropped:
+  // it runs once more afterwards, and every caller waits for the run that includes its change.
+  let inflight: Promise<void> | undefined;
+  let rerun = false;
+  function refresh(): Promise<void> {
+    if (inflight) {
+      rerun = true;
+      return inflight;
+    }
+    inflight = (async () => {
+      do {
+        rerun = false;
+        await load();
+      } while (rerun);
+    })().finally(() => {
+      inflight = undefined;
+    });
+    return inflight;
+  }
+
+  async function load() {
     const folder = vscode.workspace.workspaceFolders?.[0];
-    if (!folder || running) return;
+    if (!folder) return;
     running = true;
     provider.setLoading();
     try {
@@ -36,6 +63,7 @@ export function activate(context: vscode.ExtensionContext) {
       const root = findProjectRoot(folder.uri.fsPath, cfg.get<string>("projectRoot") ?? "");
       if (!root) {
         provider.set({ ok: false, error: "No manage.py found. Set fetchlens.projectRoot." });
+        analyser.setRoutes([]);
         return;
       }
       const python = await pythonFor(folder);
@@ -52,6 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
           : `Failed: ${result.error}\n${result.detail ?? ""}`
       );
       provider.set(result);
+      analyser.setRoutes(result.ok ? result.routes : []);
     } finally {
       running = false;
     }
@@ -93,6 +122,8 @@ export function activate(context: vscode.ExtensionContext) {
   return {
     /** For tests: resolves once the first load finished. */
     loaded: () => first.then(() => provider.routes),
+    /** For tests: what the finder concluded about each call in a document. */
+    analyse: (doc: vscode.TextDocument) => analyser.analyse(doc).map((a) => ({ line: a.range.start.line, path: a.call.path, method: a.call.method, status: a.status.kind })),
   };
 }
 
