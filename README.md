@@ -2,7 +2,7 @@
 
 A VS Code extension that reads the URLs your Django project really serves, lists them in a sidebar, and jumps from a route to the view that handles it.
 
-> **Status: 0.1.0, not yet on the Marketplace.** Everything below works and is tested; see [Install](#install).
+> **Status: 0.1.0.** Everything below works and is tested. See [Limits](#limits) for what it does not do yet.
 
 ## Features
 
@@ -49,7 +49,7 @@ Because that executes your project's code, the extension is disabled in untruste
 
 ## Install
 
-Not published to the Marketplace yet. Until then, build and install the package yourself:
+Search for **Django FetchLens** in the VS Code Extensions view, or install from the [Marketplace page](https://marketplace.visualstudio.com/items?itemName=jammiguelyfish.django-fetchlens). To build it yourself instead:
 
 ```bash
 git clone https://github.com/jammiguelyfish/django-fetchlens
