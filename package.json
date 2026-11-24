@@ -1,0 +1,122 @@
+{
+  "name": "django-fetchlens",
+  "displayName": "Django FetchLens",
+  "description": "Browse your Django routes, jump from a frontend fetch() call to the view that serves it, and get warned about URLs and methods that do not exist.",
+  "version": "0.0.1",
+  "publisher": "jammiguelyfish",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "django",
+    "drf",
+    "rest",
+    "endpoints",
+    "routes",
+    "fetch",
+    "axios"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/manage.py"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "FetchLens runs your Django project (django.setup()) to read its URL configuration, which executes project code."
+    }
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "fetchlens",
+          "title": "Django Routes",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "fetchlens": [
+        {
+          "id": "fetchlens.routes",
+          "name": "Routes"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "fetchlens.refresh",
+        "title": "Django FetchLens: Refresh routes",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "fetchlens.goToRoute",
+        "title": "Django FetchLens: Go to route..."
+      },
+      {
+        "command": "fetchlens.openRoute",
+        "title": "Django FetchLens: Open view"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "fetchlens.refresh",
+          "when": "view == fetchlens.routes",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Django FetchLens",
+      "properties": {
+        "fetchlens.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Python interpreter that has your project's dependencies. Empty uses the interpreter selected in the Python extension."
+        },
+        "fetchlens.projectRoot": {
+          "type": "string",
+          "default": "",
+          "description": "Folder containing manage.py, relative to the workspace. Empty auto-detects."
+        },
+        "fetchlens.settingsModule": {
+          "type": "string",
+          "default": "",
+          "description": "DJANGO_SETTINGS_MODULE to use. Empty reads it from manage.py."
+        },
+        "fetchlens.env": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables to set while loading Django, e.g. {\"DJANGO_DEBUG\": \"1\"}. Needed when your settings refuse to load without them."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "test": "vitest run",
+    "test:py": "python test/test_helper.py",
+    "test:e2e": "npm run compile && node test/e2e/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^3.1.0",
+    "mocha": "^12.0.3",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}
