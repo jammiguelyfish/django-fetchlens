@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- More Marketplace search keywords; README feedback section.
+
 ## 0.1.1
 
 - New extension icon: a lens following a call to its view.

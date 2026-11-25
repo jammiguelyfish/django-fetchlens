@@ -55,8 +55,8 @@ Search for **Django FetchLens** in the VS Code Extensions view, or install from 
 git clone https://github.com/jammiguelyfish/django-fetchlens
 cd django-fetchlens
 npm install
-npm run package                     # creates django-fetchlens-0.1.1.vsix
-code --install-extension django-fetchlens-0.1.1.vsix
+npm run package                     # creates django-fetchlens-0.1.2.vsix
+code --install-extension django-fetchlens-0.1.2.vsix
 ```
 
 Open a folder that contains a Django project (a `manage.py`) and trust the workspace. The Django Routes icon appears in the activity bar. The project's dependencies must be installed in the interpreter selected in the Python extension (or set `fetchlens.pythonPath`).
@@ -104,6 +104,10 @@ npm run test:e2e     # launches a real VS Code against test/fixtures/sample
 Set `FETCHLENS_TEST_PYTHON` to an interpreter that has `Django` and `djangorestframework` installed.
 
 If `npm run test:e2e` fails with "Cannot find module" on Windows, your shell has `ELECTRON_RUN_AS_NODE` set (VS Code terminals do); unset it first.
+
+## Feedback
+
+If FetchLens saves you time, a [rating or review on the Marketplace](https://marketplace.visualstudio.com/items?itemName=jammiguelyfish.django-fetchlens&ssr=false#review-details) helps other Django developers find it. Bugs and ideas go in [GitHub issues](https://github.com/jammiguelyfish/django-fetchlens/issues); issues labelled `good first issue` are a friendly place to start contributing.
 
 ## License
 
